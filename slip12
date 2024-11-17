@@ -1,0 +1,9 @@
+print("accept 5 number from user")
+a=int(input("enter first number"))
+b=int(input("enter second number"))
+c=int(input("enter third number"))
+d=int(input("enter fourth number"))
+e=int(input("enter five number"))
+sum=a+b+c+d+e
+avg=sum/5
+print("avg of first five numbers",avg)
