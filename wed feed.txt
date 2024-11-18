@@ -1,43 +1,29 @@
-from flask import Flask, render_template
-from werkzeug.contrib.atom import AtomFeed
-import datetime
 
-app = Flask(__name__)
+  import feedparser
 
-# Sample data
-posts = [
-    {
-        'title': 'Post 1',
-        'content': 'This is the content of post 1.',
-        'date': datetime.datetime(2023, 1, 1),
-    },
-    {
-        'title': 'Post 2',
-        'content': 'This is the content of post 2.',
-        'date': datetime.datetime(2023, 2, 1),
-    },
-]
+# Define the URL of the RSS feed
+feed_url = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"  # Example: New York Times RSS feed
 
-# Route to generate the feed
-@app.route('/feed')
-def feed():
-    feed=AtomFeed('MyBlog Feed', feed_url='https://yourblog.com/feed', url='https://yourblog.com')
+def fetch_feed(url):
+    # Parse the feed
+    feed = feedparser.parse(url)
+   
+    # Check if the feed was parsed successfully
+    if feed.bozo == 1:
+        print("Failed to fetch feed.")
+        return
+   
+    # Print feed title
+    print(f"Feed Title: {feed.feed.title}\n")
+   
+    # Display the feed items
+    print("Latest Entries:")
+    for entry in feed.entries[:5]:  # Fetch only the latest 5 entries
+        print(f"\nTitle: {entry.title}")
+        print(f"Link: {entry.link}")
+        print(f"Published: {entry.published}")
+        print(f"Summary: {entry.summary}\n")
 
-    for post in posts:
-        feed.add(post['title'], unicode(post['content']),
-                 content_type='html',
-                 author='Your Name',
-                 url='https://yourblog.com/post/{}'.format(post['title']),
-                 updated=post['date'],
-                 published=post['date'])
-
-    return feed.get_response()
-
-# Route for the home page
-@app.route('/')
-def home():
-    return render_template('index.html', posts=posts)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
+if __name__ == "__main__":
+    # Fetch and display the feed
+    fetch_feed(feed_url)
